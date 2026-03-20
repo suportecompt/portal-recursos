@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Referencias al DOM
+    // 1. DOM References
     const grid = document.getElementById('form-grid');
     const sortSelect = document.getElementById('sort-options');
     const btnGrid = document.getElementById('view-grid');
@@ -9,8 +9,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     let displayedForms = [];
     let currentView = 'grid';
 
-    // --- CARGA DE DATOS DESDE SUPABASE ---
+    // --- FETCH DATA FROM SUPABASE ---
     async function fetchPortalData() {
+        // Initial loading message
+        if (grid) grid.innerHTML = '<p class="text-slate-500 text-center col-span-full py-12">A carregar recursos...</p>';
+
         const { data, error } = await window.supabaseClient
             .from('portal_links')
             .select('*')
@@ -18,21 +21,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             .order('customer_name', { ascending: true });
 
         if (error) {
-            console.error("Error cargando el portal:", error);
+            console.error("Error loading portal:", error);
+            if (grid) grid.innerHTML = '<p class="text-red-500 text-center col-span-full">Erro ao ligar à base de dados.</p>';
             return [];
         }
         return data;
     }
 
-    // Justo antes de: const rawData = await fetchPortalData();
-    grid.innerHTML = '<p class="text-slate-500 text-center col-span-full">A carregar recursos...</p>';
-
-    // Inicialización de datos
-    const rawData = await fetchPortalData();
-    allForms = rawData;
+    // Initialization
+    allForms = await fetchPortalData();
     displayedForms = [...allForms];
 
-    // Llenar el select de clientes dinámicamente
+    // Fill customer select dynamically
     const customerNames = [...new Set(allForms.map(item => item.customer_name))];
     if (sortSelect) {
         customerNames.forEach(name => {
@@ -43,12 +43,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // --- FUNCIÓN RENDER ---
+    // --- RENDER FUNCTION ---
     function render() {
         if (!grid) return;
         grid.innerHTML = '';
         
-        // Clases de contenedor según la vista
         grid.className = currentView === 'grid' 
             ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-fr" 
             : "flex flex-col gap-4";
@@ -64,9 +63,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                 <i data-lucide="${form.icon || 'help-circle'}" class="w-4 h-4"></i>
                             </div>
-                            <h2 class="text-sm font-bold text-slate-800 line-clamp-2">${form.title}</h2>
+                            <h2 class="text-[13px] font-bold text-slate-800 line-clamp-2 leading-tight">${form.title}</h2>
                         </div>
-                        <p class="text-slate-500 text-[10px] mb-4 line-clamp-3">${form.description || ''}</p>
+                        <p class="text-slate-500 text-[10px] mb-4 line-clamp-3 leading-relaxed">${form.description || ''}</p>
                     </div>
                     <div class="pt-3 border-t border-slate-100 mt-auto shrink-0">
                         <div class="flex items-center text-[10px] font-semibold text-slate-900 group-hover:text-blue-600">
@@ -82,8 +81,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <i data-lucide="${form.icon || 'help-circle'}" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h2 class="text-base font-bold text-slate-800 line-clamp-1">${form.title}</h2>
-                            <p class="text-xs text-slate-400">${form.customer_name}</p>
+                            <h2 class="text-sm font-bold text-slate-800 line-clamp-1">${form.title}</h2>
+                            <p class="text-[10px] text-slate-400">${form.customer_name}</p>
                         </div>
                     </div>
                     <i data-lucide="chevron-right" class="text-slate-300 group-hover:text-blue-500 transition-colors"></i>
@@ -94,24 +93,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             grid.appendChild(card);
         });
 
-        // Refrescar iconos de Lucide
         lucide.createIcons();
     }
 
     // --- EVENT LISTENERS ---
 
-    // Filtrado por cliente
     if (sortSelect) {
         sortSelect.addEventListener('change', (e) => {
             const selected = e.target.value;
-            displayedForms = selected === 'all' 
+            displayedForms = (selected === 'all') 
                 ? [...allForms] 
                 : allForms.filter(f => f.customer_name === selected);
             render();
         });
     }
 
-    // Cambio de vista (Grid/List)
     if (btnGrid && btnList) {
         btnGrid.onclick = () => {
             currentView = 'grid';
@@ -128,6 +124,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     }
 
-    // Render inicial
     render(); 
 });
