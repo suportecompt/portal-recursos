@@ -7,23 +7,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     let allForms = [];
     let displayedForms = [];
-    let currentView = 'grid';
+    
+    // --- DYNAMIC DEFAULT VIEW ---
+    // Check window width to set default view (mobile < 768px = list, desktop = grid)
+    let currentView = window.innerWidth < 768 ? 'list' : 'grid';
 
     // --- FETCH DATA FROM SUPABASE ---
     async function fetchPortalData() {
         // Initial loading message
-        if (grid) grid.innerHTML = '<p class="text-slate-500 text-center col-span-full py-12">A carregar recursos...</p>';
+        if (grid) grid.innerHTML = '<p class="text-slate-500 text-center col-span-full py-12">Loading resources...</p>';
 
         const { data, error } = await window.supabaseClient
             .from('portal_links')
             .select('*')
             .eq('active', true)
-            .order('customer_name', { ascending: true }) // 1º Order by customer name
-            .order('title', { ascending: true });        // 2º Order by title
+            .order('customer_name', { ascending: true }) // 1st Order by customer name
+            .order('title', { ascending: true });        // 2nd Order by title
 
         if (error) {
             console.error("Error loading portal:", error);
-            if (grid) grid.innerHTML = '<p class="text-red-500 text-center col-span-full">Erro ao ligar à base de dados.</p>';
+            if (grid) grid.innerHTML = '<p class="text-red-500 text-center col-span-full">Database connection error.</p>';
             return [];
         }
         return data;
@@ -31,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialization
     allForms = await fetchPortalData();
-    displayedForms = [...allForms]; // Por defecto mostramos todos
+    displayedForms = [...allForms]; // Show all by default
 
     // Fill customer select dynamically
     const customerNames = [...new Set(allForms.map(item => item.customer_name))];
@@ -43,17 +46,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             sortSelect.appendChild(option);
         });
 
-        // --- RECOVER LOCALLSTORAGE SELECTION ---
+        // --- RECOVER LOCALSTORAGE SELECTION ---
         const savedCustomer = localStorage.getItem('selectedCustomer');
         
-        //Verify if a customer was selected and cheking if it still exists. If not selects all.
+        // Verify if a customer was selected and check if it still exists. If not, selects all.
         if (savedCustomer && (savedCustomer === 'all' || customerNames.includes(savedCustomer))) {
-            sortSelect.value = savedCustomer; // Actualizamos el select visualmente
+            sortSelect.value = savedCustomer; // Update the select visually
             
             // Filter the data before rendering
             displayedForms = (savedCustomer === 'all') 
                 ? [...allForms] 
                 : allForms.filter(f => f.customer_name === savedCustomer);
+        }
+    }
+
+    // --- BUTTON STYLES UPDATE HELPER ---
+    function updateViewButtons() {
+        if (!btnGrid || !btnList) return;
+        
+        if (currentView === 'grid') {
+            // Activate Grid button, Deactivate List button
+            btnGrid.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
+            btnGrid.classList.remove('text-slate-500', 'hover:text-slate-700');
+            
+            btnList.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
+            btnList.classList.add('text-slate-500', 'hover:text-slate-700');
+        } else {
+            // Activate List button, Deactivate Grid button
+            btnList.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
+            btnList.classList.remove('text-slate-500', 'hover:text-slate-700');
+            
+            btnGrid.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
+            btnGrid.classList.add('text-slate-500', 'hover:text-slate-700');
         }
     }
 
@@ -107,6 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             grid.appendChild(card);
         });
 
+        updateViewButtons(); // Ensure button states match the current view visually
         lucide.createIcons();
     }
 
@@ -116,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         sortSelect.addEventListener('change', (e) => {
             const selected = e.target.value;
             
-            // --- GUARDAR SELECCIÓN EN LOCALSTORAGE ---
+            // --- SAVE SELECTION IN LOCALSTORAGE ---
             localStorage.setItem('selectedCustomer', selected);
 
             displayedForms = (selected === 'all') 
@@ -129,15 +154,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (btnGrid && btnList) {
         btnGrid.onclick = () => {
             currentView = 'grid';
-            btnGrid.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
-            btnList.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
             render();
         };
 
         btnList.onclick = () => {
             currentView = 'list';
-            btnList.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
-            btnGrid.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
             render();
         };
     }
