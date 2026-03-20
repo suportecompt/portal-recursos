@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             .from('portal_links')
             .select('*')
             .eq('active', true)
-            .order('customer_name', { ascending: true });
+            .order('customer_name', { ascending: true }) // 1º Order by customer name
+            .order('title', { ascending: true });        // 2º Order by title
 
         if (error) {
             console.error("Error loading portal:", error);
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialization
     allForms = await fetchPortalData();
-    displayedForms = [...allForms];
+    displayedForms = [...allForms]; // Por defecto mostramos todos
 
     // Fill customer select dynamically
     const customerNames = [...new Set(allForms.map(item => item.customer_name))];
@@ -41,6 +42,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             option.textContent = name;
             sortSelect.appendChild(option);
         });
+
+        // --- RECOVER LOCALLSTORAGE SELECTION ---
+        const savedCustomer = localStorage.getItem('selectedCustomer');
+        
+        //Verify if a customer was selected and cheking if it still exists. If not selects all.
+        if (savedCustomer && (savedCustomer === 'all' || customerNames.includes(savedCustomer))) {
+            sortSelect.value = savedCustomer; // Actualizamos el select visualmente
+            
+            // Filter the data before rendering
+            displayedForms = (savedCustomer === 'all') 
+                ? [...allForms] 
+                : allForms.filter(f => f.customer_name === savedCustomer);
+        }
     }
 
     // --- RENDER FUNCTION ---
@@ -101,6 +115,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (sortSelect) {
         sortSelect.addEventListener('change', (e) => {
             const selected = e.target.value;
+            
+            // --- GUARDAR SELECCIÓN EN LOCALSTORAGE ---
+            localStorage.setItem('selectedCustomer', selected);
+
             displayedForms = (selected === 'all') 
                 ? [...allForms] 
                 : allForms.filter(f => f.customer_name === selected);
