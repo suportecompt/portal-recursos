@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Recursos</title>
+    <style>
+        body { margin: 0; padding: 0; background-image: radial-gradient(circle at top right, #e2e8f0 0%, #f8fafc 40%); min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: system-ui, sans-serif; color: #1e293b; }
+        #staticrypt-form { background: white; padding: 3rem; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); text-align: center; max-width: 400px; width: 90%; }
+        #staticrypt-form img { display: block; margin: 0 auto 1.5rem auto; max-height: 40px; width: auto; }
+        #staticrypt-instructions { margin-bottom: 2rem; font-size: 1rem; color: #475569; }
+        #staticrypt-password { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 1rem; margin-bottom: 1rem; box-sizing: border-box; }
+        .btn-submit { width: 100%; padding: 0.75rem; background-color: #3b82f6; color: white; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <form id="staticrypt-form" action="#" method="post">
+        <img src="logo.png" alt="Logotipo">
+        <p id="staticrypt-instructions">Bem-vindo ao Portal. Por favor, identifique-se para continuar.</p>
+        <input id="staticrypt-password" type="password" name="password" placeholder="Palavra-passe secreta..." required>
+        <button class="btn-submit" type="submit">Aceder ao Dashboard</button>
+    </form>
+
+    {staticrypt_js}
+</body>
+</html>
