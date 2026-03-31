@@ -1,1 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Helpdesk Requests</title>
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Helpdesk Requests</h2>
+
+<div id="records_show">Loading...</div>
+
+<script>
+function fetchHelpdeskRequests() {
+    var xhr = new XMLHttpRequest();
+    var url = "https://supabase1.myserver.pt/rest/v1/helpdeskrequests";
+
+    xhr.open("GET", url, true);
+
+    // 🔑 Replace with your actual key
+    var apiKey = "YOUR_ANON_PUBLIC_KEY";
+
+    xhr.setRequestHeader("apikey", apiKey);
+    xhr.setRequestHeader("Authorization", "Bearer " + apiKey);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            var container = document.getElementById("records_show");
+
+            if (xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+
+                if (data.length === 0) {
+                    container.innerHTML = "No records found.";
+                    return;
+                }
+
+                var output = "<table>";
+                output += "<tr>";
+
+                // Auto-create table headers from keys
+                for (var key in data[0]) {
+                    output += "<th>" + key + "</th>";
+                }
+                output += "</tr>";
+
+                // Table rows
+                for (var i = 0; i < data.length; i++) {
+                    output += "<tr>";
+                    for (var key in data[i]) {
+                        output += "<td>" + data[i][key] + "</td>";
+                    }
+                    output += "</tr>";
+                }
+
+                output += "</table>";
+
+                container.innerHTML = output;
+
+            } else {
+                container.innerHTML =
+                    "<b>Error:</b> " + xhr.status + "<br>" + xhr.responseText;
+            }
+        }
+    };
+
+    xhr.send();
+}
+
+// Load data
+fetchHelpdeskRequests();
+</script>
+
+</body>
+</html>
