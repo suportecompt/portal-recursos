@@ -10,6 +10,15 @@
             margin: 20px;
         }
 
+        #error_box {
+            color: #721c24;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
@@ -35,6 +44,10 @@
 
 <h2>Helpdesk Requests</h2>
 
+<!-- 🔴 Error box -->
+<div id="error_box"></div>
+
+<!-- 📊 Data output -->
 <div id="records_show">Loading...</div>
 
 <script>
@@ -44,7 +57,6 @@ function fetchHelpdeskRequests() {
 
     xhr.open("GET", url, true);
 
-    // 🔑 Replace with your actual key
     var apiKey = "YOUR_ANON_PUBLIC_KEY";
 
     xhr.setRequestHeader("apikey", apiKey);
@@ -54,8 +66,12 @@ function fetchHelpdeskRequests() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             var container = document.getElementById("records_show");
+            var errorBox = document.getElementById("error_box");
 
             if (xhr.status === 200) {
+                errorBox.style.display = "none";
+                errorBox.innerHTML = "";
+
                 var data = JSON.parse(xhr.responseText);
 
                 if (data.length === 0) {
@@ -63,16 +79,15 @@ function fetchHelpdeskRequests() {
                     return;
                 }
 
-                var output = "<table>";
-                output += "<tr>";
+                var output = "<table><tr>";
 
-                // Auto-create table headers from keys
+                // headers
                 for (var key in data[0]) {
                     output += "<th>" + key + "</th>";
                 }
                 output += "</tr>";
 
-                // Table rows
+                // rows
                 for (var i = 0; i < data.length; i++) {
                     output += "<tr>";
                     for (var key in data[i]) {
@@ -86,8 +101,10 @@ function fetchHelpdeskRequests() {
                 container.innerHTML = output;
 
             } else {
-                container.innerHTML =
-                    "<b>Error:</b> " + xhr.status + "<br>" + xhr.responseText;
+                errorBox.style.display = "block";
+                errorBox.innerHTML = "<b>Error:</b> " + xhr.status + "<br>" + xhr.responseText;
+
+                container.innerHTML = "";
             }
         }
     };
@@ -95,7 +112,6 @@ function fetchHelpdeskRequests() {
     xhr.send();
 }
 
-// Load data
 fetchHelpdeskRequests();
 </script>
 
