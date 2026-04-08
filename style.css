@@ -1,0 +1,13 @@
+/* Import the 'Plus Jakarta Sans' font from Google Fonts with specific weights */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    
+    /* Original radial gradient background */
+    background-image: radial-gradient(circle at top right, #e2e8f0 0%, #f8fafc 40%);
+    
+    /* Fix for background clipping on scroll */
+    min-height: 100vh;             /* Ensures the body ALWAYS takes up at least the full viewport height */
+    background-attachment: fixed;  /* Keeps the background fixed in place so it doesn't move or cut off during scrolling */
+}

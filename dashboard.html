@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Formulários</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+
+    <meta name="robots" content="noindex, nofollow, noarchive">
+
+</head>
+<body class="bg-[#f8fafc] text-slate-900 antialiased hidden">
+
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        
+        <header class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 mb-12">
+            
+            <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+                <img src="logo.png" alt="Logotipo" class="h-8 md:h-10 w-auto shrink-0">
+                <div class="h-6 md:h-8 w-[1px] bg-slate-200 shrink-0"></div>
+                <h1 class="text-lg md:text-xl font-bold tracking-tight text-slate-800 line-clamp-1">Portal de Recursos</h1>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:max-w-4xl">
+                
+                <form action="https://www.google.com/search" method="get" target="_blank" class="relative flex-grow w-full group">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        name="q" 
+                        placeholder="Pesquisar no Google..." 
+                        class="w-full bg-white border border-slate-200 py-2 pl-10 pr-4 rounded-lg text-sm shadow-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all text-slate-700"
+                        autocomplete="off"
+                    >
+                </form>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto shrink-0">
+                    <div class="relative flex-grow sm:flex-grow-0 min-w-[160px]">
+                        <select id="sort-options" class="w-full appearance-none bg-white border border-slate-200 text-slate-700 py-2 pl-4 pr-10 rounded-lg text-sm font-medium focus:outline-none focus:border-blue-500 cursor-pointer shadow-sm">
+                            <option value="all">Todos os Clientes</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+
+                    <div class="flex bg-slate-200 p-1 rounded-lg shrink-0">
+                        <button id="view-grid" class="p-2 rounded-md bg-white shadow-sm text-blue-600 transition-all">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                        </button>
+                        <button id="view-list" class="p-2 rounded-md text-slate-500 hover:text-slate-700 transition-all">
+                            <i data-lucide="list" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <button id="btn-logout" class="ml-2 p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors flex items-center gap-2 text-sm font-semibold shadow-sm border border-red-100">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Sair</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main id="form-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        </main>
+        
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
